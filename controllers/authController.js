@@ -48,11 +48,11 @@ const login = async(req, res) => {
         id: user._id,
     }
 
-    const token = jwt.sign(paylaod, SECRET_KEY, {expiresIn: "23h"})
-    await User.findByIdAndUpdate(user._id, {token})
+    const accessToken = jwt.sign(paylaod, SECRET_KEY, {expiresIn: "23h"})
+    await User.findByIdAndUpdate(user._id, {accessToken})
 
     res.json({
-        token,
+        accessToken,
         user: {
             "email": user.email,
         }
@@ -62,7 +62,7 @@ const login = async(req, res) => {
 const logout = async(req, res) => {
     const {_id} = req.user;
 
-    await User.findByIdAndUpdate(_id, {token: ""});
+    await User.findByIdAndUpdate(_id, {accessToken: ""});
 
     res.status(204).json({message: "logout success"});
 }
