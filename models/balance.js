@@ -5,7 +5,7 @@ const { handleSaveErrors } = require("../helpers");
 
 const balanceSchema = new Schema(
   {
-    balanceValue: {
+    balance: {
       type: Number,
       default: 0.0,
       required: [true, "Set balance sum"],

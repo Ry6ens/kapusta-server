@@ -11,17 +11,17 @@ const addNewBalance = async (req, res) => {
 
   const result = await Balance.findOneAndUpdate(
     { owner },
-    { balanceValue: req.body.newBalance },
+    { balance: req.body.newBalance },
     { new: true }
   );
-  res.status(201).json({ balanceValue: result.balanceValue });
+  res.status(201).json({ balance: result.balance });
 };
 
 const getBalance = async (req, res) => {
   const { _id: owner } = req.user;
 
   const result = await Balance.findOne({ owner });
-  res.status(201).json({ balanceValue: result.balanceValue });
+  res.status(201).json({ balance: result.balance });
 };
 
 module.exports = {
