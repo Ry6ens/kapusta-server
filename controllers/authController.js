@@ -84,7 +84,7 @@ const signup = async (req, res) => {
     const accessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "23h" });
     await User.findByIdAndUpdate(owner, { accessToken });
     res.json({
-      accessToken: user.accessToken,
+      accessToken: accessToken,
       user: {
         email: user.email,
         name: user.name,
