@@ -72,8 +72,33 @@ const logout = async (req, res) => {
   res.status(204).json({ message: "logout success" });
 };
 
+const signup = async (req, res) => {
+  const { email, sub, name } = req.body;
+  const user = await User.findOne({ email });
+  if (user) {
+    throw RequestError(409, "Email in use");
+  }
+  const hashPassword = await bcrypt.hash(sub, 10);
+  const newUser = await User.create({ email, password: hashPassword, name });
+  const owner = newUser._id;
+  await Balance.create({ owner });
+  const paylaod = {
+    id: owner,
+  };
+  const accessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "23h" });
+  await User.findByIdAndUpdate(owner, { accessToken });
+  res.json({
+    accessToken: accessToken,
+    user: {
+      email: newUser.email,
+      name: newUser.name,
+    },
+  });
+};
+
 module.exports = {
   register,
   login,
   logout,
+  signup,
 };

@@ -49,12 +49,30 @@ const emailSchema = Joi.object({
   email: Joi.string().pattern(emailRegexp).required(),
 });
 
+const googleSchema = Joi.object({
+  email: Joi.string().pattern(emailRegexp).required(),
+  name: Joi.string().required(),
+  sub: Joi.string().required(),
+  aud: Joi.string().optional(),
+  azp: Joi.string().optional(),
+  email_verified: Joi.boolean().optional(),
+  exp: Joi.number().optional(),
+  family_name: Joi.string().optional(),
+  given_name: Joi.string().optional(),
+  iat: Joi.number().optional(),
+  iss: Joi.string().optional(),
+  jti: Joi.string().optional(),
+  nbf: Joi.number().optional(),
+  picture: Joi.string().optional(),
+});
+
 const User = model("user", userSchema);
 
 const schemas = {
   registerSchema,
   loginSchema,
   emailSchema,
+  googleSchema,
 };
 
 module.exports = {

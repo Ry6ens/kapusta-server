@@ -11,11 +11,17 @@ router.post(
   validateBody(schemas.registerSchema),
   ctrlWrapper(ctrl.register)
 );
-// signin
+// login
 router.post(
   "/login",
   validateBody(schemas.loginSchema),
   ctrlWrapper(ctrl.login)
+);
+// google login
+router.post(
+  "/google/signup",
+  validateBody(schemas.googleSchema),
+  ctrlWrapper(ctrl.signup)
 );
 
 router.get("/logout", authenticate, ctrlWrapper(ctrl.logout));

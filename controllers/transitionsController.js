@@ -226,7 +226,6 @@ const getTransitionsReqData = async (req, res) => {
   if (!result) {
     throw RequestError(404, "Not found");
   }
-  console.log(result);
   res.json(result);
 };
 
