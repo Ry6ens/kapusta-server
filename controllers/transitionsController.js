@@ -224,9 +224,13 @@ const getTimeLineData = async (req, res) => {
   );
   const userBalance = await Balance.find({ owner });
 
-  const data = monthlyData(userTransitions);
+  const userAllTransitions = await Transition.find(
+    { owner },
+    "-createdAt -updatedAt"
+  );
+  const data = monthlyData(userAllTransitions);
 
-  if (!userTransitions || !userBalance) {
+  if (!userTransitions || !userBalance || !data) {
     throw RequestError(404, "Not found");
   }
 
