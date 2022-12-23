@@ -14,7 +14,7 @@ const addNewBalance = async (req, res) => {
     { balance: req.body.newBalance },
     { new: true }
   );
-  res.status(201).json({ balance: result.balance });
+  res.status(201).json({ newBalance: result.balance });
 };
 
 const getBalance = async (req, res) => {
