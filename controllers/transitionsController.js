@@ -213,6 +213,7 @@ const getDataByCategoryExpensesDateil = async (req, res) => {
 };
 
 const getTimeLineData = async (req, res) => {
+  console.log(req);
   console.log(req.body);
   const { error } = schemas.reqDateSchema.validate(req.body);
   if (error) {
