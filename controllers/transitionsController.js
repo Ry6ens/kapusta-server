@@ -223,12 +223,17 @@ const getTimeLineData = async (req, res) => {
     "-createdAt -updatedAt"
   );
   const userBalance = await Balance.find({ owner });
+
+  const data = monthlyData(userTransitions);
+
   if (!userTransitions || !userBalance) {
     throw RequestError(404, "Not found");
   }
+
   const result = {
     balance: userBalance[0].balance,
-    transitions: userTransitions,
+    monthlySum: data.monthlySum,
+    transitions: data.transitions,
   };
   res.json(result);
 };
