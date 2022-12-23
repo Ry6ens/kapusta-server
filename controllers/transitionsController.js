@@ -21,21 +21,20 @@ const addNewTransition = async (req, res) => {
     reportDate: convertDate(req.body.transitionDate),
   });
 
-  const getBalanceValue = await Balance.findOne({ owner });
+  const getBalance = await Balance.findOne({ owner });
   if (req.body.transitionName === "income") {
     await Balance.findOneAndUpdate(
       { owner },
-      { balanceValue: getBalanceValue.balanceValue + req.body.transitionValue },
+      { balance: getBalance.balance + req.body.transitionValue },
       { new: true }
     );
   } else {
     await Balance.findOneAndUpdate(
       { owner },
-      { balanceValue: getBalanceValue.balanceValue - req.body.transitionValue },
+      { balance: getBalance.balance - req.body.transitionValue },
       { new: true }
     );
   }
-
   res.status(201).json(result);
 };
 
@@ -50,18 +49,18 @@ const deleteTransition = async (req, res) => {
   if (!result) {
     throw RequestError(404);
   }
-
-  const getBalanceValue = await Balance.findOne({ owner });
+  
+  const getBalance = await Balance.findOne({ owner });
   if (result.transitionName === "income") {
     await Balance.findOneAndUpdate(
       { owner },
-      { balanceValue: getBalanceValue.balanceValue - result.transitionValue },
+      { balance: getBalance.balance - result.transitionValue },
       { new: true }
     );
   } else {
     await Balance.findOneAndUpdate(
       { owner },
-      { balanceValue: getBalanceValue.balanceValue + result.transitionValue },
+      { balance: getBalance.balance + result.transitionValue },
       { new: true }
     );
   }
@@ -213,19 +212,21 @@ const getDataByCategoryExpensesDateil = async (req, res) => {
   res.json(reqDateResult.sumByDescription);
 };
 
-const getTransitionsReqData = async (req, res) => {
+const getTimeLineData = async (req, res) => {
   const { error } = schemas.reqDateSchema.validate(req.body);
   if (error) {
     throw RequestError(400, error.message);
   }
   const { _id: owner } = req.user;
-  const result = await Transition.find(
+  const userTransitions = await Transition.find(
     { reportDate: `${convertDate(req.body.reqDate)}`, owner },
     "-createdAt -updatedAt"
   );
-  if (!result) {
+    const userBalance = await Balance.find({owner})
+  if (!userTransitions || !userBalance) {
     throw RequestError(404, "Not found");
   }
+  const result = {balance: userBalance[0].balance, transitions: userTransitions}
   res.json(result);
 };
 
@@ -239,5 +240,5 @@ module.exports = {
   getDataByCategoryExpenses,
   getDataByCategoryIncomeDateil,
   getDataByCategoryExpensesDateil,
-  getTransitionsReqData,
+  getTimeLineData,
 };

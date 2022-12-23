@@ -21,7 +21,7 @@ router.post(
 router.post(
   "/google/signup",
   validateBody(schemas.googleSchema),
-  ctrlWrapper(ctrl.signup)
+  ctrlWrapper(ctrl.googleSignup)
 );
 
 router.get("/logout", authenticate, ctrlWrapper(ctrl.logout));

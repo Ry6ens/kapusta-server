@@ -32,6 +32,7 @@ const register = async (req, res) => {
     user: {
       name: newUser.name,
       email: newUser.email,
+      newUser: newUser.newUser,
     },
   });
 };
@@ -54,13 +55,14 @@ const login = async (req, res) => {
   };
 
   const accessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "23h" });
-  await User.findByIdAndUpdate(user._id, { accessToken });
+  await User.findByIdAndUpdate(user._id, { accessToken, newUser: false });
 
   res.json({
     accessToken,
     user: {
       email: user.email,
       name: user.name,
+      newUser: user.newUser,
     },
   });
 };
@@ -73,7 +75,7 @@ const logout = async (req, res) => {
   res.status(204).json({ message: "logout success" });
 };
 
-const signup = async (req, res) => {
+const googleSignup = async (req, res) => {
   const { email, sub, name } = req.body;
   const user = await User.findOne({ email });
   if (user) {
@@ -82,12 +84,13 @@ const signup = async (req, res) => {
       id: owner,
     };
     const accessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "23h" });
-    await User.findByIdAndUpdate(owner, { accessToken });
+    await User.findByIdAndUpdate(owner, { accessToken, newUser: false });
     res.json({
       accessToken: accessToken,
       user: {
         email: user.email,
         name: user.name,
+        newUser: user.newUser,
       },
     });
   } else {
@@ -105,6 +108,7 @@ const signup = async (req, res) => {
       user: {
         email: newUser.email,
         name: newUser.name,
+        newUser: newUser.newUser,
       },
     });
   }
@@ -114,5 +118,5 @@ module.exports = {
   register,
   login,
   logout,
-  signup,
+  googleSignup,
 };
