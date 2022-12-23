@@ -13,7 +13,7 @@ const transitionSchema = new Schema({
         enum: transitionName,
     },
     transitionDate: {
-        type: Date,
+        type: String,
         required: [true, 'Set transition date'],
     },
     reportDate: {

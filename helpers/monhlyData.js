@@ -22,9 +22,9 @@ const monthlyData = (result) => {
         return false;
     }
 
-const newListTransition = result.filter(filterByYaer);
+const transitions = result.filter(filterByYaer);
 
-const newResult = {monthlySum, newListTransition};
+const newResult = {monthlySum, transitions};
     return newResult;
 }
 

@@ -49,7 +49,7 @@ const deleteTransition = async (req, res) => {
   if (!result) {
     throw RequestError(404);
   }
-  
+
   const getBalance = await Balance.findOne({ owner });
   if (result.transitionName === "income") {
     await Balance.findOneAndUpdate(
@@ -223,6 +223,8 @@ const getTimeLineData = async (req, res) => {
     "-createdAt -updatedAt"
   );
     const userBalance = await Balance.find({owner})
+
+
   if (!userTransitions || !userBalance) {
     throw RequestError(404, "Not found");
   }
