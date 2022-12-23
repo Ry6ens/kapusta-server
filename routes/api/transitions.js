@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post("/", authenticate, ctrlWrapper(ctrl.addNewTransition));
 
-router.get("/timeLine", authenticate, ctrlWrapper(ctrl.getTimeLineData));
+router.post("/timeLine", authenticate, ctrlWrapper(ctrl.getTimeLineData));
 
 router.get("/income/monthly", authenticate, ctrlWrapper(ctrl.getIncomeMonthly));
 
