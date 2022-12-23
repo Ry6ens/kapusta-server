@@ -222,13 +222,14 @@ const getTimeLineData = async (req, res) => {
     { reportDate: `${convertDate(req.body.reqDate)}`, owner },
     "-createdAt -updatedAt"
   );
-    const userBalance = await Balance.find({owner})
-
-
+  const userBalance = await Balance.find({ owner });
   if (!userTransitions || !userBalance) {
     throw RequestError(404, "Not found");
   }
-  const result = {balance: userBalance[0].balance, transitions: userTransitions}
+  const result = {
+    balance: userBalance[0].balance,
+    transitions: userTransitions,
+  };
   res.json(result);
 };
 
