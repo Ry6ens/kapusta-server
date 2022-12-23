@@ -49,7 +49,7 @@ const deleteTransition = async (req, res) => {
   if (!result) {
     throw RequestError(404);
   }
-  
+
   const getBalance = await Balance.findOne({ owner });
   if (result.transitionName === "income") {
     await Balance.findOneAndUpdate(
@@ -213,6 +213,7 @@ const getDataByCategoryExpensesDateil = async (req, res) => {
 };
 
 const getTimeLineData = async (req, res) => {
+  console.log(req.body);
   const { error } = schemas.reqDateSchema.validate(req.body);
   if (error) {
     throw RequestError(400, error.message);
@@ -222,11 +223,14 @@ const getTimeLineData = async (req, res) => {
     { reportDate: `${convertDate(req.body.reqDate)}`, owner },
     "-createdAt -updatedAt"
   );
-    const userBalance = await Balance.find({owner})
+  const userBalance = await Balance.find({ owner });
   if (!userTransitions || !userBalance) {
     throw RequestError(404, "Not found");
   }
-  const result = {balance: userBalance[0].balance, transitions: userTransitions}
+  const result = {
+    balance: userBalance[0].balance,
+    transitions: userTransitions,
+  };
   res.json(result);
 };
 
