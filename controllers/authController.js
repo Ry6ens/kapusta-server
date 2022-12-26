@@ -1,7 +1,8 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { Balance } = require("../models/balance");
+const gravatar = require("gravatar");
 
+const { Balance } = require("../models/balance");
 const { User } = require("../models/user");
 const { SECRET_KEY } = process.env;
 
@@ -16,12 +17,14 @@ const register = async (req, res) => {
   }
 
   const hashPassword = await bcrypt.hash(password, 10);
+  const avatarURL = gravatar.url(email);
 
   const newUser = await User.create({
     username,
     email,
     password: hashPassword,
     name,
+    avatarURL,
   });
 
   const owner = newUser._id;
@@ -33,6 +36,7 @@ const register = async (req, res) => {
       name: newUser.name,
       email: newUser.email,
       newUser: newUser.newUser,
+      avatarURL: newUser.avatarURL,
     },
   });
 };
@@ -76,7 +80,7 @@ const logout = async (req, res) => {
 };
 
 const googleSignup = async (req, res) => {
-  const { email, sub, name } = req.body;
+  const { email, sub, name, picture } = req.body;
   const user = await User.findOne({ email });
   if (user) {
     const owner = user.id;
@@ -91,11 +95,13 @@ const googleSignup = async (req, res) => {
         email: user.email,
         name: user.name,
         newUser: user.newUser,
+        
       },
     });
   } else {
     const hashPassword = await bcrypt.hash(sub, 10);
-    const newUser = await User.create({ email, password: hashPassword, name });
+    const avatarURL = picture;
+    const newUser = await User.create({ email, password: hashPassword, name, avatarURL });
     const owner = newUser._id;
     await Balance.create({ owner });
     const paylaod = {
@@ -109,6 +115,7 @@ const googleSignup = async (req, res) => {
         email: newUser.email,
         name: newUser.name,
         newUser: newUser.newUser,
+        avatarURL: newUser.avatarURL,
       },
     });
   }

@@ -31,6 +31,9 @@ const userSchema = new Schema(
     newUser: {
       type: Boolean,
       default: true,
+    },
+    avatarURL: {
+        type: String,
     }
   },
   { versionKey: false, timestamps: true }
