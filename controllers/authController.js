@@ -124,6 +124,10 @@ const googleSignup = async (req, res) => {
 const updateUserController = async (req, res) => {
   const { _id } = req.user;
 
+  const { date, month, year, sex, email, file, firstName, lastName,} = req.body;
+
+  console.log(req.body)
+
   await User.findByIdAndUpdate(_id, { accessToken: "" });
 
   res.status(204).json({ message: "logout success" });

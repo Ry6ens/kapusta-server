@@ -12,11 +12,11 @@ router.post("/timeLine", authenticate, ctrlWrapper(ctrl.getTimeLineData));
 
 router.get("/income/monthly", authenticate, ctrlWrapper(ctrl.getIncomeMonthly));
 
-router.get("/income/date", authenticate, ctrlWrapper(ctrl.getIncomeByDate));
+router.post("/income/date", authenticate, ctrlWrapper(ctrl.getIncomeByDate));
 
 router.get("/expenses/monthly", authenticate, ctrlWrapper(ctrl.getExpensesMonthly));
 
-router.get("/expenses/date", authenticate, ctrlWrapper(ctrl.getExpensesByDate));
+router.post("/expenses/date", authenticate, ctrlWrapper(ctrl.getExpensesByDate));
 
 router.delete("/delete/:transitionId", authenticate, isValidId, ctrlWrapper(ctrl.deleteTransition));
 
