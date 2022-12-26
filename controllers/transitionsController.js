@@ -237,7 +237,7 @@ const getTimeLineData = async (req, res) => {
   const result = {
     balance: userBalance[0].balance,
     monthlySum: data.monthlySum,
-    transitions: data.transitions,
+    transitions: userTransitions,
   };
   res.json(result);
 };
