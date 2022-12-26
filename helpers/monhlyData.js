@@ -12,7 +12,7 @@ const monthlyData = (result) => {
             }
                 return s}, 0);
             const newDate = new Date(currentDate.getFullYear(), month);
-            monthlySum.push({[newDate.toLocaleString('en', { month: 'long' })]: sum});
+            monthlySum.push({month: newDate.toLocaleString('en', { month: 'long' }), sum: sum});
     }
     function filterByYaer(item) {
         const newDate = new Date(item.transitionDate);
