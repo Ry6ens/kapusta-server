@@ -82,6 +82,38 @@ const getIncomeMonthly = async (req, res) => {
   res.json(incomeMonthly);
 };
 
+const getIncomeByDate = async (req, res) => {
+  const { error } = schemas.reqDateSchema.validate(req.body);
+  if (error) {
+    throw RequestError(400, error.message);
+  }
+  const { _id: owner } = req.user;
+  const result = await Transition.find(
+    { transitionName: "income", transitionDate: req.body.reqDate, owner },
+    "-createdAt -updatedAt"
+  );
+  if (!result) {
+    throw RequestError(404, "Not found");
+  }
+  res.json(result);
+};
+
+const getExpensesByDate = async (req, res) => {
+  const { error } = schemas.reqDateSchema.validate(req.body);
+  if (error) {
+    throw RequestError(400, error.message);
+  }
+  const { _id: owner } = req.user;
+  const result = await Transition.find(
+    { transitionName: "expenses", transitionDate: req.body.reqDate, owner },
+    "-createdAt -updatedAt"
+  );
+  if (!result) {
+    throw RequestError(404, "Not found");
+  }
+  res.json(result);
+};
+
 const getExpensesMonthly = async (req, res) => {
   const { _id: owner } = req.user;
   const result = await Transition.find(
@@ -246,7 +278,9 @@ module.exports = {
   addNewTransition,
   deleteTransition,
   getIncomeMonthly,
+  getIncomeByDate,
   getExpensesMonthly,
+  getExpensesByDate,
   getDataByName,
   getDataByCategoryIncome,
   getDataByCategoryExpenses,

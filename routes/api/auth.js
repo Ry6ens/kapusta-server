@@ -1,7 +1,7 @@
 const express = require("express");
 const { ctrlWrapper } = require("../../helpers");
 const ctrl = require("../../controllers/authController");
-const { validateBody, authenticate } = require("../../middlewares");
+const { validateBody, authenticate, isValidId } = require("../../middlewares");
 const { schemas } = require("../../models/user");
 const router = express.Router();
 
@@ -25,5 +25,7 @@ router.post(
 );
 
 router.get("/logout", authenticate, ctrlWrapper(ctrl.logout));
+
+router.patch("/update", authenticate, validateBody(schemas.updateUserSchema), ctrlWrapper(ctrl.updateUserController));
 
 module.exports = router;

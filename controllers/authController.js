@@ -121,9 +121,18 @@ const googleSignup = async (req, res) => {
   }
 };
 
+const updateUserController = async (req, res) => {
+  const { _id } = req.user;
+
+  await User.findByIdAndUpdate(_id, { accessToken: "" });
+
+  res.status(204).json({ message: "logout success" });
+};
+
 module.exports = {
   register,
   login,
   logout,
   googleSignup,
+  updateUserController,
 };

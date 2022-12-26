@@ -5,6 +5,7 @@ const { handleSaveErrors } = require("../helpers");
 
 const emailRegexp =
   /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+const genders = ['male', 'female', ""];
 
 const userSchema = new Schema(
   {
@@ -34,7 +35,32 @@ const userSchema = new Schema(
     },
     avatarURL: {
         type: String,
-    }
+    },
+    firstName: {
+      type: String,
+      default: "",
+    },
+    lastName: {
+      type: String,
+      default: "",
+    },
+    dateBirth: {
+      type: String,
+      default: "",
+    },
+    monthBirth: {
+      type: String,
+      default: "",
+    },
+    yearBirth: {
+      type: String,
+      default: "",
+    },
+    gender: {
+      type: String,
+      enum: genders,
+      default: "",
+    },
   },
   { versionKey: false, timestamps: true }
 );
@@ -73,6 +99,17 @@ const googleSchema = Joi.object({
   picture: Joi.string().optional(),
 });
 
+const updateUserSchema = Joi.object({
+  email: Joi.string().pattern(emailRegexp).required(),
+  date: Joi.string().optional(),
+  month: Joi.string().optional(),
+  year: Joi.string().optional(),
+  firstName: Joi.string().required(),
+  lastName: Joi.string().required(),
+  sex: Joi.string().valid(...genders).optional(),
+  file: Joi.string().optional(),
+});
+
 const User = model("user", userSchema);
 
 const schemas = {
@@ -80,6 +117,7 @@ const schemas = {
   loginSchema,
   emailSchema,
   googleSchema,
+  updateUserSchema,
 };
 
 module.exports = {
