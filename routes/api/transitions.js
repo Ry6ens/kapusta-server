@@ -28,7 +28,7 @@ router.get(
   ctrlWrapper(ctrl.getDataByCategoryIncome)
 );
 
-router.get(
+router.post(
   "/report/category/income/dateil",
   authenticate,
   ctrlWrapper(ctrl.getDataByCategoryIncomeDateil)
@@ -40,7 +40,7 @@ router.get(
   ctrlWrapper(ctrl.getDataByCategoryExpenses)
 );
 
-router.get(
+router.post(
   "/report/category/expenses/dateil",
   authenticate,
   ctrlWrapper(ctrl.getDataByCategoryExpensesDateil)
