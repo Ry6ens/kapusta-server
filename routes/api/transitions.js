@@ -20,7 +20,7 @@ router.post("/expenses/date", authenticate, ctrlWrapper(ctrl.getExpensesByDate))
 
 router.delete("/delete/:transitionId", authenticate, isValidId, ctrlWrapper(ctrl.deleteTransition));
 
-router.get("/report/category", authenticate, ctrlWrapper(ctrl.getDataByName));
+router.post("/report/category", authenticate, ctrlWrapper(ctrl.getDataByName));
 
 router.get(
   "/report/category/income",

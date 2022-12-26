@@ -6,6 +6,7 @@ require('dotenv').config()
 const transitionsRouter = require('./routes/api/transitions')
 const authRouter = require('./routes/api/auth')
 const balancesRouter = require('./routes/api/balances')
+const avatarsRouter = require('./routes/api/avatars')
 
 const app = express()
 
@@ -18,6 +19,7 @@ app.use(express.json())
 app.use('/api/transitions', transitionsRouter)
 app.use('/api/users', authRouter)
 app.use('/api/balances', balancesRouter)
+app.use('/api/avatars', avatarsRouter)
 
 app.use((req, res) => {
   res.status(404).json({ message: 'Not found' })
