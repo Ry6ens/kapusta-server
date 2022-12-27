@@ -92,10 +92,15 @@ const getIncomeByDate = async (req, res) => {
     { transitionName: "income", transitionDate: req.body.reqDate, owner },
     "-createdAt -updatedAt"
   );
-  if (!result) {
+  const balance = await Balance.findOne({owner});
+
+  const monthlyTransition = await Transition.find({owner, transitionName: "income"});
+  const monthlySum = monthlyData(monthlyTransition).monthlySum;
+
+  if (!result || !balance || !monthlyTransition) {
     throw RequestError(404, "Not found");
   }
-  res.json(result);
+  res.json({transitionByDate: result, balance: balance.balance, monthlySum});
 };
 
 const getExpensesByDate = async (req, res) => {
@@ -103,15 +108,21 @@ const getExpensesByDate = async (req, res) => {
   if (error) {
     throw RequestError(400, error.message);
   }
+
   const { _id: owner } = req.user;
   const result = await Transition.find(
     { transitionName: "expenses", transitionDate: req.body.reqDate, owner },
     "-createdAt -updatedAt"
   );
-  if (!result) {
+  const balance = await Balance.findOne({owner});
+
+  const monthlyTransition = await Transition.find({owner, transitionName: "expenses"});
+  const monthlySum = monthlyData(monthlyTransition).monthlySum;
+
+  if (!result || !balance || !monthlyTransition) {
     throw RequestError(404, "Not found");
   }
-  res.json(result);
+  res.json({transitionByDate: result, balance: balance.balance, monthlySum});
 };
 
 const getExpensesMonthly = async (req, res) => {
