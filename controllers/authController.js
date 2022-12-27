@@ -8,7 +8,7 @@ const path = require("path");
 
 const { Balance } = require("../models/balance");
 const { User } = require("../models/user");
-const { SECRET_KEY, BASE_URL } = process.env;
+const { SECRET_KEY } = process.env;
 
 const { RequestError } = require("../helpers");
 
@@ -63,16 +63,9 @@ const login = async (req, res) => {
   };
 
   const accessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "23h" });
-  await User.findByIdAndUpdate(user._id, { accessToken, newUser: false });
+  const result = await User.findByIdAndUpdate(user._id, { accessToken, newUser: false }, {new: true});
 
-  res.json({
-    accessToken,
-    user: {
-      email: user.email,
-      name: user.name,
-      newUser: user.newUser,
-    },
-  });
+  res.json(result);
 };
 
 const logout = async (req, res) => {
@@ -92,16 +85,9 @@ const googleSignup = async (req, res) => {
       id: owner,
     };
     const accessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "23h" });
-    await User.findByIdAndUpdate(owner, { accessToken, newUser: false });
-    res.json({
-      accessToken: accessToken,
-      user: {
-        email: user.email,
-        name: user.name,
-        newUser: user.newUser,
-        
-      },
-    });
+    const result = await User.findByIdAndUpdate(owner, { accessToken, newUser: false });
+    res.json(result);
+
   } else {
     const hashPassword = await bcrypt.hash(sub, 10);
     const avatarURL = picture;
@@ -138,7 +124,12 @@ const updateUserController = async (req, res) => {
     const resizeAvatar = await Jimp.read(resultUpload);
     await resizeAvatar.resize(250, 250).write(resultUpload);
 
-    const avatarURL = `https://kapusta-server.herokuapp.com/static/avatars/${filename}`
+    const production  = 'https://kapusta-server.herokuapp.com';
+    const development = 'http://localhost:4000';
+    const url = (process.env.NODE_ENV ? production : development);
+    console.log(url)
+
+    const avatarURL = `${url}/static/avatars/${filename}`
 
     const result = await User.findByIdAndUpdate(owner, { firstName: firstName, lastName: lastName, gender: sex, dateBirth: date, monthBirth: month, yearBirth: year, email: email, avatarURL: avatarURL}, {new: true});
     res.status(200).json(result);
