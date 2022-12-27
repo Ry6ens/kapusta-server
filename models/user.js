@@ -9,11 +9,6 @@ const genders = ['male', 'female', ""];
 
 const userSchema = new Schema(
   {
-    name: {
-      type: String,
-      required: [true, "Set user name for user"],
-      minlength: 2,
-    },
     password: {
       type: String,
       required: [true, "Set password for user"],
@@ -38,7 +33,7 @@ const userSchema = new Schema(
     },
     firstName: {
       type: String,
-      default: "",
+      required: [true, "Name is required"],
     },
     lastName: {
       type: String,
@@ -70,7 +65,7 @@ userSchema.post("save", handleSaveErrors);
 const registerSchema = Joi.object({
   email: Joi.string().pattern(emailRegexp).required(),
   password: Joi.string().min(6).required(),
-  name: Joi.string().min(2).required(),
+  firstName: Joi.string().required(),
 });
 
 const loginSchema = Joi.object({

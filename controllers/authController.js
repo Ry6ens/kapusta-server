@@ -13,7 +13,7 @@ const { SECRET_KEY } = process.env;
 const { RequestError } = require("../helpers");
 
 const register = async (req, res) => {
-  const { username, email, password, name } = req.body;
+  const { username, email, password, firstName } = req.body;
 
   const user = await User.findOne({ email });
   if (user) {
@@ -27,7 +27,7 @@ const register = async (req, res) => {
     username,
     email,
     password: hashPassword,
-    name,
+    firstName,
     avatarURL,
   });
 
@@ -37,10 +37,9 @@ const register = async (req, res) => {
 
   res.status(201).json({
     user: {
-      name: newUser.name,
+      firstName: newUser.name,
       email: newUser.email,
       newUser: newUser.newUser,
-      avatarURL: newUser.avatarURL,
     },
   });
 };
@@ -85,29 +84,22 @@ const googleSignup = async (req, res) => {
       id: owner,
     };
     const accessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "23h" });
-    const result = await User.findByIdAndUpdate(owner, { accessToken, newUser: false });
+    const result = await User.findByIdAndUpdate(owner, { accessToken, newUser: false }, {new: true});
     res.json(result);
 
   } else {
     const hashPassword = await bcrypt.hash(sub, 10);
     const avatarURL = picture;
-    const newUser = await User.create({ email, password: hashPassword, name, avatarURL });
+    const newUser = await User.create({ email, password: hashPassword, firstName: name, avatarURL });
+    
     const owner = newUser._id;
     await Balance.create({ owner });
     const paylaod = {
       id: owner,
     };
     const accessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "23h" });
-    await User.findByIdAndUpdate(owner, { accessToken });
-    res.json({
-      accessToken: accessToken,
-      user: {
-        email: newUser.email,
-        name: newUser.name,
-        newUser: newUser.newUser,
-        avatarURL: newUser.avatarURL,
-      },
-    });
+    const result = await User.findByIdAndUpdate(owner, { accessToken }, {new: true});
+    res.json(result);
   }
 };
 
@@ -126,8 +118,7 @@ const updateUserController = async (req, res) => {
 
     const production  = 'https://kapusta-server.herokuapp.com';
     const development = 'http://localhost:4000';
-    const url = (process.env.NODE_ENV ? production : development);
-    console.log(url)
+    const url = (process.env.NODE_ENV ? development : production);
 
     const avatarURL = `${url}/static/avatars/${filename}`
 
