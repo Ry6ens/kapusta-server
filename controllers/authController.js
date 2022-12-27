@@ -2,11 +2,15 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const gravatar = require("gravatar");
 
+const Jimp = require('jimp');
+const fs = require("fs/promises");
+const path = require("path");
+
 const { Balance } = require("../models/balance");
 const { User } = require("../models/user");
-const { SECRET_KEY } = process.env;
+const { SECRET_KEY, BASE_URL } = process.env;
 
-const { RequestError, updateNewAvatar } = require("../helpers");
+const { RequestError } = require("../helpers");
 
 const register = async (req, res) => {
   const { username, email, password, name } = req.body;
@@ -121,18 +125,25 @@ const googleSignup = async (req, res) => {
   }
 };
 
+const avatarsDir = path.join(__dirname, "../", "public", "avatars")
+
 const updateUserController = async (req, res) => {
-  const { _id: owner } = req.user;
+    const { _id: owner } = req.user;
+    const { date, month, year, sex, email, firstName, lastName} = req.body;
+    const {path: tempUpload, originalname} = req.file;
+    const filename = `${owner}_${originalname}`;
+    const resultUpload = path.join(avatarsDir, filename);
+    await fs.rename(tempUpload, resultUpload);
 
-  const { date, month, year, sex, email, file, firstName, lastName,} = req.body;
+    const resizeAvatar = await Jimp.read(resultUpload);
+    await resizeAvatar.resize(250, 250).write(resultUpload);
 
-  const newAvatar = updateNewAvatar(file, owner);
-  console.log(newAvatar)
+    const avatarURL = `${BASE_URL}/static/avatars/${filename}`
 
-  const result = await User.findByIdAndUpdate(owner, { firstName: firstName, lastName: lastName, gender: sex, dateBirth: date, monthBirth: month, yearBirth: year, email: email }, {new: true});
+    const result = await User.findByIdAndUpdate(owner, { firstName: firstName, lastName: lastName, gender: sex, dateBirth: date, monthBirth: month, yearBirth: year, email: email, avatarURL: avatarURL}, {new: true});
+    res.status(200).json(result);
 
-  res.status(200).json(result);
-};
+  };
 
 module.exports = {
   register,
