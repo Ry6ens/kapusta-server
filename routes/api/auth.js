@@ -1,7 +1,7 @@
 const express = require("express");
 const { ctrlWrapper } = require("../../helpers");
 const ctrl = require("../../controllers/authController");
-const { validateBody, authenticate, upload } = require("../../middlewares");
+const { validateBody, authenticate, upload, isValidId } = require("../../middlewares");
 const { schemas } = require("../../models/user");
 const router = express.Router();
 
@@ -15,5 +15,7 @@ router.post("/google/signup", validateBody(schemas.googleSchema), ctrlWrapper(ct
 router.get("/logout", authenticate, ctrlWrapper(ctrl.logout));
 
 router.patch("/update", authenticate, upload.single("avatar"), validateBody(schemas.updateUserSchema), ctrlWrapper(ctrl.updateUserController));
+
+router.delete("/:userId", authenticate, isValidId, ctrlWrapper(ctrl.deleteUserController))
 
 module.exports = router;

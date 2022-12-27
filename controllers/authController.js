@@ -142,8 +142,14 @@ const updateUserController = async (req, res) => {
 
     const result = await User.findByIdAndUpdate(owner, { firstName: firstName, lastName: lastName, gender: sex, dateBirth: date, monthBirth: month, yearBirth: year, email: email, avatarURL: avatarURL}, {new: true});
     res.status(200).json(result);
-
   };
+
+  const deleteUserController = async (req, res) => {
+    const {userId} = req.params;
+    const {_id: owner} = req.user;
+    await User.findOneAndRemove({_id: userId, owner});
+        res.status(200).json({message: "user deleted"});
+}
 
 module.exports = {
   register,
@@ -151,4 +157,5 @@ module.exports = {
   logout,
   googleSignup,
   updateUserController,
+  deleteUserController,
 };
