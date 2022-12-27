@@ -108,6 +108,9 @@ const avatarsDir = path.join(__dirname, "../", "public", "avatars")
 const updateUserController = async (req, res) => {
     const { _id: owner } = req.user;
     const { date, month, year, sex, email, firstName, lastName} = req.body;
+    
+    const avatar = req.file;
+    if(avatar) {
     const {path: tempUpload, originalname} = req.file;
     const filename = `${owner}_${originalname}`;
     const resultUpload = path.join(avatarsDir, filename);
@@ -124,6 +127,10 @@ const updateUserController = async (req, res) => {
 
     const result = await User.findByIdAndUpdate(owner, { firstName: firstName, lastName: lastName, gender: sex, dateBirth: date, monthBirth: month, yearBirth: year, email: email, avatarURL: avatarURL}, {new: true});
     res.status(200).json(result);
+    } else {
+      const result = await User.findByIdAndUpdate(owner, { firstName: firstName, lastName: lastName, gender: sex, dateBirth: date, monthBirth: month, yearBirth: year, email: email}, {new: true});
+    res.status(200).json(result);
+    }
   };
 
   const deleteUserController = async (req, res) => {
