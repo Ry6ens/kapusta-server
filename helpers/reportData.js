@@ -32,4 +32,4 @@ const reportData = (result) => {
     return resultData;
 }
 
-module.exports = reportData
+module.exports = reportData;

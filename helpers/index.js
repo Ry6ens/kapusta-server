@@ -4,6 +4,7 @@ const handleSaveErrors = require("./handleSaveErrors");
 const monthlyData = require("./monhlyData");
 const convertDate = require("./convertDate");
 const reportData = require("./reportData");
+const checkData = require("./checkData");
 
 module.exports = {
     RequestError,
@@ -12,4 +13,5 @@ module.exports = {
     monthlyData,
     convertDate,
     reportData,
+    checkData,
 }

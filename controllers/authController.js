@@ -10,7 +10,7 @@ const { Balance } = require("../models/balance");
 const { User } = require("../models/user");
 const { SECRET_KEY } = process.env;
 
-const { RequestError } = require("../helpers");
+const { RequestError, checkData } = require("../helpers");
 
 const register = async (req, res) => {
   const { username, email, password, firstName } = req.body;
@@ -107,8 +107,10 @@ const avatarsDir = path.join(__dirname, "../", "public", "avatars")
 
 const updateUserController = async (req, res) => {
     const { _id: owner } = req.user;
+    const user = await User.findOne({owner});
+
     const { date, month, year, sex, email, firstName, lastName} = req.body;
-    
+
     const avatar = req.file;
     if(avatar) {
     const {path: tempUpload, originalname} = req.file;
@@ -125,10 +127,27 @@ const updateUserController = async (req, res) => {
 
     const avatarURL = `${url}/static/avatars/${filename}`
 
-    const result = await User.findByIdAndUpdate(owner, { firstName: firstName, lastName: lastName, gender: sex, dateBirth: date, monthBirth: month, yearBirth: year, email: email, avatarURL: avatarURL}, {new: true});
+    const result = await User.findByIdAndUpdate(owner, {
+      firstName: checkData(firstName, user.firstName), 
+      lastName: checkData(lastName, user.lastName), 
+      gender: checkData(sex, user.gender), 
+      dateBirth: checkData(date, user.date), 
+      monthBirth: checkData(month, user.month), 
+      yearBirth: checkData(year, user.year), 
+      email: checkData(email, user.email), 
+      avatarURL: avatarURL}, {new: true});
+
     res.status(200).json(result);
     } else {
-      const result = await User.findByIdAndUpdate(owner, { firstName: firstName, lastName: lastName, gender: sex, dateBirth: date, monthBirth: month, yearBirth: year, email: email}, {new: true});
+      const result = await User.findByIdAndUpdate(owner, { 
+      firstName: checkData(firstName, user.firstName), 
+      lastName: checkData(lastName, user.lastName), 
+      gender: checkData(sex, user.gender), 
+      dateBirth: checkData(date, user.date), 
+      monthBirth: checkData(month, user.month), 
+      yearBirth: checkData(year, user.year), 
+      email: checkData(email, user.email)}, {new: true});
+
     res.status(200).json(result);
     }
   };

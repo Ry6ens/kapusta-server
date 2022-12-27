@@ -8,4 +8,4 @@ const convertDate = (result) => {
     return reportDate;
 }
 
-module.exports = convertDate
+module.exports = convertDate;
