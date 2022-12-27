@@ -138,7 +138,7 @@ const updateUserController = async (req, res) => {
     const resizeAvatar = await Jimp.read(resultUpload);
     await resizeAvatar.resize(250, 250).write(resultUpload);
 
-    const avatarURL = `${BASE_URL}/static/avatars/${filename}`
+    const avatarURL = `https://kapusta-server.herokuapp.com/static/avatars/${filename}`
 
     const result = await User.findByIdAndUpdate(owner, { firstName: firstName, lastName: lastName, gender: sex, dateBirth: date, monthBirth: month, yearBirth: year, email: email, avatarURL: avatarURL}, {new: true});
     res.status(200).json(result);
