@@ -35,6 +35,7 @@ router.patch(
   "/update",
   authenticate,
   upload.single("avatar"),
+  validateBody(schemas.updateUserSchema),
   ctrlWrapper(ctrl.updateUserController)
 );
 

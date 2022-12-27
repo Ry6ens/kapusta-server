@@ -122,7 +122,7 @@ const googleSignup = async (req, res) => {
 const avatarsDir = path.join(__dirname, "../", "public", "avatars");
 const updateUserController = async (req, res) => {
     const { _id: owner } = req.user;
-    const user = await User.findOne({owner});
+    const user = await User.findOne(owner);
 
     const { date, month, year, sex, email, firstName, lastName} = req.body;
 
@@ -141,7 +141,6 @@ const updateUserController = async (req, res) => {
     const url = process.env.NODE_ENV ? development : production;
 
     const avatarURL = `${url}/static/avatars/${filename}`;
-
     const result = await User.findByIdAndUpdate(owner, {
       firstName: checkData(firstName, user.firstName), 
       lastName: checkData(lastName, user.lastName), 
@@ -151,7 +150,6 @@ const updateUserController = async (req, res) => {
       yearBirth: checkData(year, user.year), 
       email: checkData(email, user.email), 
       avatarURL: avatarURL}, {new: true});
-
     res.status(200).json(result);
     } else {
       const result = await User.findByIdAndUpdate(owner, { 
@@ -162,7 +160,6 @@ const updateUserController = async (req, res) => {
       monthBirth: checkData(month, user.month), 
       yearBirth: checkData(year, user.year), 
       email: checkData(email, user.email)}, {new: true});
-
     res.status(200).json(result);
   }
 };

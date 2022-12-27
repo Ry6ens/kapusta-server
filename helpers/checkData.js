@@ -5,8 +5,8 @@ const checkData = (first, second) => {
     } else {
         result = first;
     }
-
     return result;
 }
+
 
 module.exports = checkData; 
