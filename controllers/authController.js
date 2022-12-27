@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const gravatar = require("gravatar");
 
-const Jimp = require('jimp');
+const Jimp = require("jimp");
 const fs = require("fs/promises");
 const path = require("path");
 
@@ -62,7 +62,11 @@ const login = async (req, res) => {
   };
 
   const accessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "23h" });
-  const result = await User.findByIdAndUpdate(user._id, { accessToken, newUser: false }, {new: true});
+  const result = await User.findByIdAndUpdate(
+    user._id,
+    { accessToken, newUser: false },
+    { new: true }
+  );
 
   res.json(result);
 };
@@ -84,34 +88,47 @@ const googleSignup = async (req, res) => {
       id: owner,
     };
     const accessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "23h" });
-    const result = await User.findByIdAndUpdate(owner, { accessToken, newUser: false }, {new: true});
+    const result = await User.findByIdAndUpdate(
+      owner,
+      { accessToken, newUser: false },
+      { new: true }
+    );
     res.json(result);
-
   } else {
     const hashPassword = await bcrypt.hash(sub, 10);
     const avatarURL = picture;
-    const newUser = await User.create({ email, password: hashPassword, firstName: name, avatarURL });
-    
+    const newUser = await User.create({
+      email,
+      password: hashPassword,
+      firstName: name,
+      avatarURL,
+    });
+
     const owner = newUser._id;
     await Balance.create({ owner });
     const paylaod = {
       id: owner,
     };
     const accessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "23h" });
-    const result = await User.findByIdAndUpdate(owner, { accessToken }, {new: true});
+    const result = await User.findByIdAndUpdate(
+      owner,
+      { accessToken },
+      { new: true }
+    );
     res.json(result);
   }
 };
 
-const avatarsDir = path.join(__dirname, "../", "public", "avatars")
+const avatarsDir = path.join(__dirname, "../", "public", "avatars");
 
 const updateUserController = async (req, res) => {
-    const { _id: owner } = req.user;
-    const { date, month, year, sex, email, firstName, lastName} = req.body;
-    
-    const avatar = req.file;
-    if(avatar) {
-    const {path: tempUpload, originalname} = req.file;
+  console.log(req.body);
+  const { _id: owner } = req.user;
+  const { date, month, year, sex, email, firstName, lastName } = req.body;
+
+  const avatar = req.file;
+  if (avatar) {
+    const { path: tempUpload, originalname } = req.file;
     const filename = `${owner}_${originalname}`;
     const resultUpload = path.join(avatarsDir, filename);
     await fs.rename(tempUpload, resultUpload);
@@ -119,26 +136,51 @@ const updateUserController = async (req, res) => {
     const resizeAvatar = await Jimp.read(resultUpload);
     await resizeAvatar.resize(250, 250).write(resultUpload);
 
-    const production  = 'https://kapusta-server.herokuapp.com';
-    const development = 'http://localhost:4000';
-    const url = (process.env.NODE_ENV ? development : production);
+    const production = "https://kapusta-server.herokuapp.com";
+    const development = "http://localhost:4000";
+    const url = process.env.NODE_ENV ? development : production;
 
-    const avatarURL = `${url}/static/avatars/${filename}`
+    const avatarURL = `${url}/static/avatars/${filename}`;
 
-    const result = await User.findByIdAndUpdate(owner, { firstName: firstName, lastName: lastName, gender: sex, dateBirth: date, monthBirth: month, yearBirth: year, email: email, avatarURL: avatarURL}, {new: true});
+    const result = await User.findByIdAndUpdate(
+      owner,
+      {
+        firstName: firstName,
+        lastName: lastName,
+        gender: sex,
+        dateBirth: date,
+        monthBirth: month,
+        yearBirth: year,
+        email: email,
+        avatarURL: avatarURL,
+      },
+      { new: true }
+    );
     res.status(200).json(result);
-    } else {
-      const result = await User.findByIdAndUpdate(owner, { firstName: firstName, lastName: lastName, gender: sex, dateBirth: date, monthBirth: month, yearBirth: year, email: email}, {new: true});
+  } else {
+    const result = await User.findByIdAndUpdate(
+      owner,
+      {
+        firstName: firstName,
+        lastName: lastName,
+        gender: sex,
+        dateBirth: date,
+        monthBirth: month,
+        yearBirth: year,
+        email: email,
+      },
+      { new: true }
+    );
     res.status(200).json(result);
-    }
-  };
+  }
+};
 
-  const deleteUserController = async (req, res) => {
-    const {userId} = req.params;
-    const {_id: owner} = req.user;
-    await User.findOneAndRemove({_id: userId, owner});
-        res.status(200).json({message: "user deleted"});
-}
+const deleteUserController = async (req, res) => {
+  const { userId } = req.params;
+  const { _id: owner } = req.user;
+  await User.findOneAndRemove({ _id: userId, owner });
+  res.status(200).json({ message: "user deleted" });
+};
 
 module.exports = {
   register,
