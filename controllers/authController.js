@@ -6,7 +6,7 @@ const { Balance } = require("../models/balance");
 const { User } = require("../models/user");
 const { SECRET_KEY } = process.env;
 
-const { RequestError } = require("../helpers");
+const { RequestError, updateNewAvatar } = require("../helpers");
 
 const register = async (req, res) => {
   const { username, email, password, name } = req.body;
@@ -122,11 +122,14 @@ const googleSignup = async (req, res) => {
 };
 
 const updateUserController = async (req, res) => {
-  const { _id } = req.user;
+  const { _id: owner } = req.user;
 
   const { date, month, year, sex, email, file, firstName, lastName,} = req.body;
 
-  const result = await User.findByIdAndUpdate(_id, { firstName: firstName, lastName: lastName, gender: sex, dateBirth: date, monthBirth: month, yearBirth: year, email: email }, {new: true});
+  const newAvatar = updateNewAvatar(file, owner);
+  console.log(newAvatar)
+
+  const result = await User.findByIdAndUpdate(owner, { firstName: firstName, lastName: lastName, gender: sex, dateBirth: date, monthBirth: month, yearBirth: year, email: email }, {new: true});
 
   res.status(200).json(result);
 };

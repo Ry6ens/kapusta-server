@@ -29,4 +29,4 @@ const newResult = {monthlySum, transitions};
     return newResult;
 }
 
-module.exports = monthlyData
+module.exports = monthlyData;

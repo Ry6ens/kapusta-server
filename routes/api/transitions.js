@@ -22,28 +22,12 @@ router.delete("/delete/:transitionId", authenticate, isValidId, ctrlWrapper(ctrl
 
 router.post("/report/category", authenticate, ctrlWrapper(ctrl.getDataByName));
 
-router.get(
-  "/report/category/income",
-  authenticate,
-  ctrlWrapper(ctrl.getDataByCategoryIncome)
-);
+router.post("/report/category/income", authenticate, ctrlWrapper(ctrl.getDataByCategoryIncome));
 
-router.post(
-  "/report/category/income/dateil",
-  authenticate,
-  ctrlWrapper(ctrl.getDataByCategoryIncomeDateil)
-);
+router.post("/report/category/income/dateil", authenticate, ctrlWrapper(ctrl.getDataByCategoryIncomeDateil));
 
-router.get(
-  "/report/category/expenses",
-  authenticate,
-  ctrlWrapper(ctrl.getDataByCategoryExpenses)
-);
+router.post("/report/category/expenses", authenticate, ctrlWrapper(ctrl.getDataByCategoryExpenses));
 
-router.post(
-  "/report/category/expenses/dateil",
-  authenticate,
-  ctrlWrapper(ctrl.getDataByCategoryExpensesDateil)
-);
+router.post("/report/category/expenses/dateil", authenticate, ctrlWrapper(ctrl.getDataByCategoryExpensesDateil));
 
 module.exports = router;
