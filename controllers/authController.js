@@ -141,8 +141,6 @@ const updateUserController = async (req, res) => {
     const url =
       process.env.NODE_ENV === "development" ? development : production;
 
-    console.log(process.env.NODE_ENV);
-
     const avatarURL = `${url}/static/avatars/${filename}`;
     const result = await User.findByIdAndUpdate(
       owner,
