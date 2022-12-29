@@ -95,14 +95,14 @@ const googleSchema = Joi.object({
 });
 
 const updateUserSchema = Joi.object({
-  date: Joi.string().optional(),
-  email: Joi.string().optional(),
-  avatar: Joi.string().optional(),
-  firstName: Joi.string().optional(),
-  lastName: Joi.string().optional(),
-  month: Joi.string().optional(),
-  sex: Joi.string().optional(),
-  year: Joi.string().optional(),
+  date: Joi.string().allow(''),
+  email: Joi.string().allow(''),
+  avatar: Joi.any().meta({ index: true }),
+  firstName: Joi.string().allow(''),
+  lastName: Joi.string().allow(''),
+  month: Joi.string().allow(''),
+  sex: Joi.string().allow(''),
+  year: Joi.string().allow(''),
 });
 
 const User = model("user", userSchema);

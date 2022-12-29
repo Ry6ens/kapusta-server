@@ -121,6 +121,7 @@ const googleSignup = async (req, res) => {
 
 const avatarsDir = path.join(__dirname, "../", "public", "avatars");
 const updateUserController = async (req, res) => {
+  console.log(req.avatar)
     const { _id: owner } = req.user;
     const user = await User.findOne(owner);
 

@@ -1,6 +1,7 @@
 const express = require("express");
 const { ctrlWrapper } = require("../../helpers");
 const ctrl = require("../../controllers/authController");
+
 const {
   validateBody,
   authenticate,
@@ -39,6 +40,8 @@ router.patch(
   ctrlWrapper(ctrl.updateUserController)
 );
 
+
+// validateBody(schemas.updateUserSchema),
 router.delete(
   "/:userId",
   authenticate,
