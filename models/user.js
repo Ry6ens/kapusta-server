@@ -97,7 +97,7 @@ const googleSchema = Joi.object({
 const updateUserSchema = Joi.object({
   date: Joi.string().allow(''),
   email: Joi.string().allow(''),
-  avatar: Joi.any().meta({ index: true }),
+  avatarIMG: Joi.any().meta({ index: true }),
   firstName: Joi.string().allow(''),
   lastName: Joi.string().allow(''),
   month: Joi.string().allow(''),

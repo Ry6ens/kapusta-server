@@ -35,8 +35,8 @@ router.get("/logout", authenticate, ctrlWrapper(ctrl.logout));
 router.patch(
   "/update",
   authenticate,
-  upload.single("avatar"),
   validateBody(schemas.updateUserSchema),
+  upload.single("avatar"),
   ctrlWrapper(ctrl.updateUserController)
 );
 

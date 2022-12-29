@@ -121,7 +121,7 @@ const googleSignup = async (req, res) => {
 
 const avatarsDir = path.join(__dirname, "../", "public", "avatars");
 const updateUserController = async (req, res) => {
-  console.log(req.avatar)
+
     const { _id: owner } = req.user;
     const user = await User.findOne(owner);
 
@@ -151,6 +151,7 @@ const updateUserController = async (req, res) => {
       yearBirth: checkData(year, user.year), 
       email: checkData(email, user.email), 
       avatarURL: avatarURL}, {new: true});
+
     res.status(200).json(result);
     } else {
       const result = await User.findByIdAndUpdate(owner, { 
@@ -161,6 +162,7 @@ const updateUserController = async (req, res) => {
       monthBirth: checkData(month, user.month), 
       yearBirth: checkData(year, user.year), 
       email: checkData(email, user.email)}, {new: true});
+
     res.status(200).json(result);
   }
 };
