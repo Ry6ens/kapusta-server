@@ -5,6 +5,7 @@ const monthlyData = require("./monhlyData");
 const convertDate = require("./convertDate");
 const reportData = require("./reportData");
 const checkData = require("./checkData");
+const readParameters = require("./readParameters");
 
 module.exports = {
     RequestError,
@@ -14,4 +15,5 @@ module.exports = {
     convertDate,
     reportData,
     checkData,
+    readParameters,
 }

@@ -30,4 +30,8 @@ router.post("/report/category/expenses", authenticate, ctrlWrapper(ctrl.getDataB
 
 router.post("/report/category/expenses/dateil", authenticate, ctrlWrapper(ctrl.getDataByCategoryExpensesDateil));
 
+router.get("/expense-categories", ctrlWrapper(ctrl.getExpenseCategories));
+
+router.get("/income-categories", ctrlWrapper(ctrl.getIncomeCategories));
+
 module.exports = router;

@@ -5,20 +5,20 @@ const { handleSaveErrors } = require("../helpers");
 
 const transitionName = ["income", "expenses"];
 const transitionCategory = [
-  "",
-  "Products",
-  "Alcohol",
-  "Entertainment",
-  "Health",
-  "Transport",
-  "Housing",
-  "Technique",
-  "Communal, communication",
-  "Sports, hobbies",
-  "Education",
-  "Other",
-  "Salary",
-  "Add. income",
+    "",
+    "Products",
+    "Alcohol",
+    "Entertainment",
+    "Health",
+    "Transport",
+    "Housing",
+    "Technique",
+    "Communal, communication",
+    "Sports, hobbies",
+    "Education",
+    "Other",
+    "Salary",
+    "Add. income"
 ];
 
 const transitionSchema = new Schema(

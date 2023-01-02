@@ -5,6 +5,7 @@ const {
   monthlyData,
   convertDate,
   reportData,
+  readParameters
 } = require("../helpers");
 const { schemas } = require("../models/transition");
 
@@ -285,6 +286,17 @@ const getTimeLineData = async (req, res) => {
   res.json(result);
 };
 
+const getExpenseCategories = async (req, res) => {
+  const result = await readParameters("expenses");
+  res.json(result);
+};
+
+const getIncomeCategories = async (req, res) => {
+  const result = await readParameters("income");
+  res.json(result);
+};
+
+
 module.exports = {
   addNewTransition,
   deleteTransition,
@@ -298,4 +310,6 @@ module.exports = {
   getDataByCategoryIncomeDateil,
   getDataByCategoryExpensesDateil,
   getTimeLineData,
+  getExpenseCategories,
+  getIncomeCategories,
 };
