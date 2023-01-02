@@ -121,15 +121,14 @@ const googleSignup = async (req, res) => {
 
 const avatarsDir = path.join(__dirname, "../", "public", "avatars");
 const updateUserController = async (req, res) => {
+  const { _id: owner } = req.user;
+  const user = await User.findOne(owner);
 
-    const { _id: owner } = req.user;
-    const user = await User.findOne(owner);
+  const { date, month, year, sex, email, firstName, lastName } = req.body;
 
-    const { date, month, year, sex, email, firstName, lastName} = req.body;
-
-    const avatar = req.file;
-    if(avatar) {
-    const {path: tempUpload, originalname} = req.file;
+  const avatar = req.file;
+  if (avatar) {
+    const { path: tempUpload, originalname } = req.file;
     const filename = `${owner}_${originalname}`;
     const resultUpload = path.join(avatarsDir, filename);
     await fs.rename(tempUpload, resultUpload);
@@ -139,29 +138,40 @@ const updateUserController = async (req, res) => {
 
     const production = "https://kapusta-server.herokuapp.com";
     const development = "http://localhost:4000";
-    const url = process.env.NODE_ENV ? development : production;
+    const url =
+      process.env.NODE_ENV === "development" ? development : production;
 
     const avatarURL = `${url}/static/avatars/${filename}`;
-    const result = await User.findByIdAndUpdate(owner, {
-      firstName: checkData(firstName, user.firstName), 
-      lastName: checkData(lastName, user.lastName), 
-      gender: checkData(sex, user.gender), 
-      dateBirth: checkData(date, user.date), 
-      monthBirth: checkData(month, user.month), 
-      yearBirth: checkData(year, user.year), 
-      email: checkData(email, user.email), 
-      avatarURL: avatarURL}, {new: true});
+    const result = await User.findByIdAndUpdate(
+      owner,
+      {
+        firstName: checkData(firstName, user.firstName),
+        lastName: checkData(lastName, user.lastName),
+        gender: checkData(sex, user.gender),
+        dateBirth: checkData(date, user.date),
+        monthBirth: checkData(month, user.month),
+        yearBirth: checkData(year, user.year),
+        email: checkData(email, user.email),
+        avatarURL: avatarURL,
+      },
+      { new: true }
+    );
 
     res.status(200).json(result);
-    } else {
-      const result = await User.findByIdAndUpdate(owner, { 
-      firstName: checkData(firstName, user.firstName), 
-      lastName: checkData(lastName, user.lastName), 
-      gender: checkData(sex, user.gender), 
-      dateBirth: checkData(date, user.date), 
-      monthBirth: checkData(month, user.month), 
-      yearBirth: checkData(year, user.year), 
-      email: checkData(email, user.email)}, {new: true});
+  } else {
+    const result = await User.findByIdAndUpdate(
+      owner,
+      {
+        firstName: checkData(firstName, user.firstName),
+        lastName: checkData(lastName, user.lastName),
+        gender: checkData(sex, user.gender),
+        dateBirth: checkData(date, user.date),
+        monthBirth: checkData(month, user.month),
+        yearBirth: checkData(year, user.year),
+        email: checkData(email, user.email),
+      },
+      { new: true }
+    );
 
     res.status(200).json(result);
   }
