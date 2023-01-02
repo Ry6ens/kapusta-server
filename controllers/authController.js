@@ -8,7 +8,7 @@ const path = require("path");
 
 const { Balance } = require("../models/balance");
 const { User } = require("../models/user");
-const { SECRET_KEY } = process.env;
+const { SECRET_KEY, REFRESH_SECRET_KEY } = process.env;
 
 const { RequestError, checkData } = require("../helpers");
 
@@ -61,20 +61,56 @@ const login = async (req, res) => {
     id: user._id,
   };
 
-  const accessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "23h" });
+  const accessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "30m" });
+  const refreshToken = jwt.sign(paylaod, REFRESH_SECRET_KEY, { expiresIn: "23h" });
   const result = await User.findByIdAndUpdate(
     user._id,
-    { accessToken, newUser: false },
+    { accessToken, refreshToken, newUser: false },
     { new: true }
   );
 
   res.json(result);
 };
 
+const refreshAccesToken = async (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(401).send({
+      message: 'No refresh token provided',
+    });
+  }
+
+  const { id } = jwt.verify(refreshToken, REFRESH_SECRET_KEY);
+
+  const user = await User.findById(id);
+
+  if(!user) {
+    return res.status(401).send({
+      message: 'User not found',
+    });
+  }
+
+  const paylaod = {
+    id: user._id,
+  }; 
+
+  const accessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "30m" });
+
+  const result = await User.findByIdAndUpdate(
+    user._id,
+    { accessToken },
+    { new: true }
+  );
+
+  res.json(result);
+};
+
+
 const logout = async (req, res) => {
   const { _id } = req.user;
 
-  await User.findByIdAndUpdate(_id, { accessToken: "" });
+  await User.findByIdAndUpdate(_id, { accessToken: "", refreshToken: "" });
 
   res.status(204).json({ message: "logout success" });
 };
@@ -191,4 +227,5 @@ module.exports = {
   googleSignup,
   updateUserController,
   deleteUserController,
+  refreshAccesToken,
 };

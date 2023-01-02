@@ -24,6 +24,10 @@ const userSchema = new Schema(
       type: String,
       default: "",
     },
+    refreshToken: {
+      type: String,
+      default: "",
+    },
     newUser: {
       type: Boolean,
       default: true,
@@ -105,6 +109,10 @@ const updateUserSchema = Joi.object({
   year: Joi.string().allow(''),
 });
 
+const refreshTokenSchema = Joi.object({
+  refreshToken: Joi.string().required(),
+});
+
 const User = model("user", userSchema);
 
 const schemas = {
@@ -113,6 +121,7 @@ const schemas = {
   emailSchema,
   googleSchema,
   updateUserSchema,
+  refreshTokenSchema,
 };
 
 module.exports = {

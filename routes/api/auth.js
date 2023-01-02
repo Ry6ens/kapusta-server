@@ -40,13 +40,17 @@ router.patch(
   ctrlWrapper(ctrl.updateUserController)
 );
 
-
-// validateBody(schemas.updateUserSchema),
 router.delete(
   "/:userId",
   authenticate,
   isValidId,
   ctrlWrapper(ctrl.deleteUserController)
 );
+
+router.post(
+  "/refresh", 
+  validateBody(schemas.refreshTokenSchema), 
+  ctrlWrapper(ctrl.refreshAccesToken)
+  );
 
 module.exports = router;
