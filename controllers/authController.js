@@ -106,7 +106,6 @@ const refreshAccesToken = async (req, res) => {
   res.json(result);
 };
 
-
 const logout = async (req, res) => {
   const { _id } = req.user;
 
@@ -123,10 +122,11 @@ const googleSignup = async (req, res) => {
     const paylaod = {
       id: owner,
     };
-    const accessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "23h" });
+    const accessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "30m" });
+    const refreshToken = jwt.sign(paylaod, REFRESH_SECRET_KEY, { expiresIn: "23h" });
     const result = await User.findByIdAndUpdate(
       owner,
-      { accessToken, newUser: false },
+      { accessToken, refreshToken, newUser: false },
       { new: true }
     );
     res.json(result);
@@ -145,10 +145,11 @@ const googleSignup = async (req, res) => {
     const paylaod = {
       id: owner,
     };
-    const accessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "23h" });
+    const accessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "30m" });
+    const refreshToken = jwt.sign(paylaod, REFRESH_SECRET_KEY, { expiresIn: "23h" });
     const result = await User.findByIdAndUpdate(
       owner,
-      { accessToken },
+      { accessToken, refreshToken },
       { new: true }
     );
     res.json(result);
