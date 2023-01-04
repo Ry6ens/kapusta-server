@@ -2,13 +2,13 @@ const express = require('express')
 const logger = require('morgan')
 const cors = require('cors')
 require('dotenv').config() 
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
+// const session = require('express-session');
+// const MongoStore = require('connect-mongo');
 
 const transitionsRouter = require('./routes/api/transitions')
 const authRouter = require('./routes/api/auth')
 const balancesRouter = require('./routes/api/balances')
-const { SECRET_KEY, DB_HOST } = process.env;
+// const { SECRET_KEY, DB_HOST } = process.env;
 
 const app = express()
 
@@ -19,18 +19,18 @@ app.use(cors())
 app.use(express.json())
 app.use('/static', express.static('public')); // To access a file avatar
 
-app.use(session({
-  name: 'example.sid',
-  secret: SECRET_KEY,
-  httpOnly: true,
-  secure: true,
-  maxAge: 1000 * 60 * 60 * 7,
-  resave: false,
-  saveUninitialized: true,
-  store: MongoStore.create({
-      mongoUrl: DB_HOST
-  })
-}));
+// app.use(session({
+//   sid: 'user.sid',
+//   secret: SECRET_KEY,
+//   httpOnly: true,
+//   secure: true,
+//   maxAge: 1000 * 60 * 60 * 7,
+//   resave: false,
+//   saveUninitialized: true,
+//   store: MongoStore.create({
+//       mongoUrl: DB_HOST
+//   })
+// }));
 
 app.use('/api/transitions', transitionsRouter)
 app.use('/api/users', authRouter)

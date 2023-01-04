@@ -28,6 +28,10 @@ const userSchema = new Schema(
       type: String,
       default: "",
     },
+    sid: {
+      type: String,
+      default: "",
+    },
     newUser: {
       type: Boolean,
       default: true,
@@ -110,7 +114,7 @@ const updateUserSchema = Joi.object({
 });
 
 const refreshTokenSchema = Joi.object({
-  refreshToken: Joi.string().required(),
+  sid: Joi.string().required(),
 });
 
 const User = model("user", userSchema);

@@ -8,6 +8,7 @@ const path = require("path");
 
 const { Balance } = require("../models/balance");
 const { User } = require("../models/user");
+const { Session } = require("../models/session");
 const { SECRET_KEY, REFRESH_SECRET_KEY } = process.env;
 
 const { RequestError, checkData } = require("../helpers");
@@ -63,53 +64,73 @@ const login = async (req, res) => {
 
   const accessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "30m" });
   const refreshToken = jwt.sign(paylaod, REFRESH_SECRET_KEY, { expiresIn: "23h" });
-  const result = await User.findByIdAndUpdate(
-    user._id,
-    { accessToken, refreshToken, newUser: false },
-    { new: true }
-  );
+  
+  const newSession = await Session.create({
+    uid: user._id,
+  });
+
+    const result = await User.findByIdAndUpdate(
+      user._id,
+      { accessToken, refreshToken, sid: newSession.id, newUser: false },
+      { new: true }
+    );
 
   res.json(result);
 };
 
-const refreshAccesToken = async (req, res) => {
-  const { refreshToken } = req.body;
+const refreshAccesToken = async (req, res, next) => {
+    const { authorization = "" } = req.headers;
+    const [bearer, refreshToken] = authorization.split(" ");
+    if (bearer !== "Bearer") {
+      return res.status(401).send({ message: "No token provided" });
+    } else {
+      const activeSession = await Session.findById(req.body.sid);
+      if (!activeSession) {
+        return res.status(404).send({ message: "Invalid session" });
+      }
 
-  if (!refreshToken) {
-    return res.status(401).send({
-      message: 'No refresh token provided',
-    });
-  }
+      let payload = "";
+      try {
+        payload = jwt.verify(refreshToken, REFRESH_SECRET_KEY);
+      } catch (error) {
+          await Session.findByIdAndDelete(req.body.sid);
+          return res.status(401).send({ message: "Unauthorized" });
+      }
 
-  const { id } = jwt.verify(refreshToken, REFRESH_SECRET_KEY);
+      const user = await User.findById(payload.id);
+      const session = await Session.findById(req.body.sid);
 
-  const user = await User.findById(id);
+      if (!user) {
+        return res.status(404).send({ message: "Invalid user" });
+      }
+      if (!session) {
+        return res.status(404).send({ message: "Invalid session" });
+      }
 
-  if(!user) {
-    return res.status(401).send({
-      message: 'User not found',
-    });
-  }
+      await Session.findByIdAndDelete(req.body.sid);
 
-  const paylaod = {
-    id: user._id,
-  }; 
+      const paylaod = {id: user._id,};
+      const newSession = await Session.create({uid: user._id});
+      const newAccessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "30m" });
+      const newRefreshToken = jwt.sign(paylaod, REFRESH_SECRET_KEY, { expiresIn: "23h" });
 
-  const accessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "30m" });
+      await User.findByIdAndUpdate(
+        user._id,
+        { accessToken: newAccessToken, refreshToken: newAccessToken, sid: newSession._id},
+        { new: true }
+      );
 
-  const result = await User.findByIdAndUpdate(
-    user._id,
-    { accessToken },
-    { new: true }
-  );
-
-  res.json(result);
+    return res
+      .status(200)
+      .send({ newAccessToken, newRefreshToken, sid: newSession._id });
+    }
 };
 
 const logout = async (req, res) => {
   const { _id } = req.user;
 
-  await User.findByIdAndUpdate(_id, { accessToken: "", refreshToken: "" });
+  await User.findByIdAndUpdate(_id, { accessToken: "", refreshToken: "", sid: "" });
+  await Session.findOneAndDelete({uid: _id});
 
   res.status(204).json({ message: "logout success" });
 };
@@ -122,14 +143,22 @@ const googleSignup = async (req, res) => {
     const paylaod = {
       id: owner,
     };
+
     const accessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "30m" });
     const refreshToken = jwt.sign(paylaod, REFRESH_SECRET_KEY, { expiresIn: "23h" });
-    const result = await User.findByIdAndUpdate(
-      owner,
-      { accessToken, refreshToken, newUser: false },
-      { new: true }
-    );
+
+    const newSession = await Session.create({
+      uid: user._id,
+    });
+  
+      const result = await User.findByIdAndUpdate(
+        user._id,
+        { accessToken, refreshToken, sid: newSession.id, newUser: false },
+        { new: true }
+      );
+
     res.json(result);
+
   } else {
     const hashPassword = await bcrypt.hash(sub, 10);
     const avatarURL = picture;
@@ -147,11 +176,17 @@ const googleSignup = async (req, res) => {
     };
     const accessToken = jwt.sign(paylaod, SECRET_KEY, { expiresIn: "30m" });
     const refreshToken = jwt.sign(paylaod, REFRESH_SECRET_KEY, { expiresIn: "23h" });
-    const result = await User.findByIdAndUpdate(
-      owner,
-      { accessToken, refreshToken },
-      { new: true }
-    );
+
+    const newSession = await Session.create({
+      uid: user._id,
+    });
+  
+      const result = await User.findByIdAndUpdate(
+        user._id,
+        { accessToken, refreshToken, sid: newSession.id, newUser: false },
+        { new: true }
+      );
+
     res.json(result);
   }
 };
@@ -216,8 +251,8 @@ const updateUserController = async (req, res) => {
 
 const deleteUserController = async (req, res) => {
   const { userId } = req.params;
-  const { _id: owner } = req.user;
-  await User.findOneAndRemove({ _id: userId, owner });
+  await User.findOneAndDelete({ _id: userId });
+  await Session.findOneAndDelete({uid: userId});
   res.status(200).json({ message: "user deleted" });
 };
 

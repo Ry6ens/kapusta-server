@@ -30,7 +30,10 @@ router.post(
   ctrlWrapper(ctrl.googleSignup)
 );
 
-router.get("/logout", authenticate, ctrlWrapper(ctrl.logout));
+router.get("/logout", 
+authenticate, 
+ctrlWrapper(ctrl.logout)
+);
 
 router.patch(
   "/update",
@@ -48,7 +51,7 @@ router.delete(
 );
 
 router.post(
-  "/refresh", 
+  "/refresh",
   validateBody(schemas.refreshTokenSchema), 
   ctrlWrapper(ctrl.refreshAccesToken)
   );
